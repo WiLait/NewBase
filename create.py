@@ -1,7 +1,7 @@
 
 import mysql.connector
 
-def create_movies_table(db_manager):
+def create_movies_table(BD_DM):
     """Создает таблицy 'movies', если она не существует."""
     try:
         create_movies_table_query = """
@@ -14,7 +14,7 @@ def create_movies_table(db_manager):
         )
         """
         # Используем метод execute_query из db_manager
-        success = db_manager.execute_query(create_movies_table_query)
+        success = BD_DM.execute_query(create_movies_table_query)
         if success:
             print("Таблица 'movies' успешно создана!")
             return True

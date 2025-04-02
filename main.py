@@ -52,12 +52,12 @@ class DatabaseManager:
 
 if __name__ == "__main__":
     # Создаем БД с настройками из config.py
-    db_manager = DatabaseManager(DB_CONFIG)
+    BD_DM = DatabaseManager(DB_CONFIG)
 
-    if db_manager.connect():
+    if BD_DM.connect():
 
+        #create_movies_table(BD_DM)
+        #drop_movies_table(BD_DM)
 
-        #create_movies_table(db_manager)
-        #drop_movies_table(db_manager)
-
-        db_manager.close()
+        BD_DM.close()
+"""Нужно сделать так чтобы не появлялись ошибки при создании уже созданного БД"""
