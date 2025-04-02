@@ -1,49 +1,63 @@
-#print("word")
 
-from getpass import getpass
 import mysql.connector
+from create import create_movies_table
+from drop import drop_movies_table
+from config import DB_CONFIG
 
-try:
-    mydb = mysql.connector.connect(
-        host="127.15.15.15",
-        user="root",
-        password="/intriga/xaxaE6",
-        database="test"
-    )
-    if mydb.is_connected():
-        print("Успешно подключено к MySQL")
 
-        mycursor = mydb.cursor()
-        mycursor.execute("SELECT VERSION()")
-        version =mycursor.fetchall()
-        print("Версия MySQL:", version)
+class DatabaseManager:
+    def __init__(self, db_config):
+        self.host = db_config['host']
+        self.user = db_config['user']
+        self.password = db_config['password']
+        self.database = db_config['database']
+        self.connection = None #Инициализация подключения
 
-        # Создание таблицы
+    def connect(self):
         try:
-            create_movies_table_query = """
-            CREATE TABLE movies(
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                title VARCHAR(100),
-                release_year YEAR(4),
-                genre VARCHAR(100),
-                collection_in_mill INT
+            self.connection = mysql.connector.connect(
+                host=self.host,
+                user=self.user,
+                password=self.password,
+                database=self.database
             )
-            """
-            with mydb.cursor() as cursor:
-                cursor.execute(create_movies_table_query)
-                mydb.commit()
-                print("Таблица 'movies' успешно создана!")
-
+            if self.connection.is_connected():
+                print("Успешно подключено к MySQL")
+                return True
+            return False
         except mysql.connector.Error as err:
-            print(f"Ошибка создание таблицы: {err}")
+            print(f"Ошибка подключения: {err}")
+            return False
+
+    def execute_query(self, query):
+        if not self.connection or not self.connection.is_connected():
+            print("Ошибка: Нет активного подключения к базе данных.")
+            return False
+
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute(query)
+                self.connection.commit()
+                return True
+        except mysql.connector.Error as err:
+            print(f"Ошибка при выполнении запроса: {err}")
+            self.connection.rollback()
+            return False
+
+    def close(self):
+        if self.connection and self.connection.is_connected():
+            self.connection.close()
+            print("Соединение с базой данных закрыто")
 
 
-except mysql.connector.Error as err:
-    print(f"Ошибка подключения: {err}")
+if __name__ == "__main__":
+    # Создаем БД с настройками из config.py
+    db_manager = DatabaseManager(DB_CONFIG)
 
-finally:
-    if 'mydb' in locals() and mydb.is_connected():
-        mydb.close()
-        print("Соединение с базой данных закрыто")
+    if db_manager.connect():
 
 
+        #create_movies_table(db_manager)
+        #drop_movies_table(db_manager)
+
+        db_manager.close()
