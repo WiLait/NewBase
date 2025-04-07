@@ -14,6 +14,7 @@ data = [
     ("Monty Python's The Meaning of Life", 1983, 7.5),
     ("Monty Python's Life of Brian", 1979, 8.0),
 ]
+
 cur.executemany("INSERT INTO movie VALUES(?, ?, ?)", data)
 con.commit()
 
