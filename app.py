@@ -1,19 +1,31 @@
-from PyQt6.QtWidgets import QApplication, QWidget
-
-import sys # Только для доступа к аргументам командной строки
-def f():
-    # Приложению нужен один (и только один) экземпляр QApplication.
-    # Передаём sys.argv, чтобы разрешить аргументы командной строки для приложения.
-    # Если не будете использовать аргументы командной строки, QApplication([]) тоже работает
-    app = QApplication(sys.argv)
-
-    # Создаём виджет Qt — окно.
-    window = QWidget()
-    window.show()  # Важно: окно по умолчанию скрыто.
-
-    # Запускаем цикл событий.
-    app.exec()
+import sqlite3
+from pathlib import Path
 
 
-    # Приложение не доберётся сюда, пока вы не выйдете и цикл
-    # событий не остановится.
+def connect_to_database():
+    """Подключение к SQLite базе данных"""
+    db_path = Path("C:/Real_estate_agency.db")  # Укажите полный путь если файл в другой папке
+
+    try:
+        conn = sqlite3.connect(db_path)
+        print("Успешное подключение к базе данных!")
+        return conn
+    except Exception as e:
+        print(f"Ошибка подключения: {e}")
+        return None
+
+
+if __name__ == "__main__":
+    connection = connect_to_database()
+
+    if connection:
+        # Проверка подключения - выводим список таблиц
+        cursor = connection.cursor()
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        tables = cursor.fetchall()
+
+        print("\nСписок таблиц в базе:")
+        for table in tables:
+            print(f"- {table[0]}")
+
+        connection.close()

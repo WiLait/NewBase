@@ -4,7 +4,7 @@ import mysql.connector
 from config import DB_CONFIG
 from link import test_connection
 #from vir_win import DatabaseTestWindow
-from app import f
+from app import MainWindow
 
 class DatabaseManager:
     def __init__(self, db_config):
@@ -25,5 +25,5 @@ class DatabaseManager:
 
 if __name__ == "__main__":
     BD_DM = DatabaseManager(DB_CONFIG)
-    f()
+    MainWindow()
 """Нужно сделать так чтобы не появлялись ошибки при создании уже созданного БД"""
