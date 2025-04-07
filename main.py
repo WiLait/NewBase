@@ -1,9 +1,10 @@
 
-import mysql.connector
-from create import create_movies_table
-from drop import drop_movies_table
-from config import DB_CONFIG
 
+import mysql.connector
+from config import DB_CONFIG
+from link import test_connection
+#from vir_win import DatabaseTestWindow
+from app import f
 
 class DatabaseManager:
     def __init__(self, db_config):
@@ -14,50 +15,15 @@ class DatabaseManager:
         self.connection = None #Инициализация подключения
 
     def connect(self):
-        try:
-            self.connection = mysql.connector.connect(
-                host=self.host,
-                user=self.user,
-                password=self.password,
-                database=self.database
-            )
-            if self.connection.is_connected():
-                print("Успешно подключено к MySQL")
-                return True
-            return False
-        except mysql.connector.Error as err:
-            print(f"Ошибка подключения: {err}")
-            return False
-
-    def execute_query(self, query):
-        if not self.connection or not self.connection.is_connected():
-            print("Ошибка: Нет активного подключения к базе данных.")
-            return False
-
-        try:
-            with self.connection.cursor() as cursor:
-                cursor.execute(query)
-                self.connection.commit()
-                return True
-        except mysql.connector.Error as err:
-            print(f"Ошибка при выполнении запроса: {err}")
-            self.connection.rollback()
-            return False
-
-    def close(self):
-        if self.connection and self.connection.is_connected():
-            self.connection.close()
-            print("Соединение с базой данных закрыто")
-
+        self.connection = mysql.connector.connect(
+            host=self.host,
+            user=self.user,
+            password=self.password,
+            database=self.database
+        )
+        return self.connection
 
 if __name__ == "__main__":
-    # Создаем БД с настройками из config.py
     BD_DM = DatabaseManager(DB_CONFIG)
-
-    if BD_DM.connect():
-
-        #create_movies_table(BD_DM)
-        #drop_movies_table(BD_DM)
-
-        BD_DM.close()
+    f()
 """Нужно сделать так чтобы не появлялись ошибки при создании уже созданного БД"""
